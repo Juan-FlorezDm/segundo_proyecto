@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reserva</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 th:text="${reserva.id != null} ? 'Editar Reserva' : 'Nueva Reserva'">Formulario de Reserva</h1>
+        
+        <!-- Mostrar errores -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        
+        <form th:action="${reserva.id != null} ? @{/reservas/editar/{id}(id=${reserva.id})} : @{/reservas}" 
+              th:object="${reserva}" method="post">
+            
+            <!-- Cédula (solo lectura) -->
+            <div class="mb-3">
+                <label class="form-label">Cédula:</label>
+                <input type="text" class="form-control" th:value="${reserva.cedulaUsuario}" readonly>
+            </div>
+            
+            <!-- Servicio como select -->
+            <div class="mb-3">
+                <label for="servicio" class="form-label">Servicio:</label>
+                <select class="form-select" id="servicio" th:field="*{servicio}" required>
+                    <option value="">Seleccione un servicio</option>
+                    <!-- Opciones dinámicas de servicios disponibles -->
+                    <option th:each="servicio : ${serviciosDisponibles}"
+                            th:value="${servicio.nombreServicio}"
+                            th:text="${servicio.nombreServicio} + ' (' + ${servicio.reservasActuales} + '/' + ${servicio.capacidadMaxima} + ')'">
+                    </option>
+                    <!-- Si está editando, mostrar también el servicio actual aunque no esté disponible -->
+                    <option th:if="${servicioActual != null}" 
+                            th:value="${servicioActual}"
+                            th:text="${servicioActual} + ' (actual)'"
+                            th:selected="${servicioActual != null}">
+                    </option>
+                </select>
+                <small class="form-text text-muted">
+                    Límite de 2 reservas por servicio. Solo se muestran servicios disponibles.
+                </small>
+            </div>
+            
+            <div class="mb-3">
+                <label for="fechaHora" class="form-label">Fecha y Hora:</label>
+                <input type="datetime-local" class="form-control" id="fechaHora" th:field="*{fechaHora}" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <span th:text="${reserva.id != null} ? 'Actualizar' : 'Crear'">Guardar</span>
+            </button>
+            <a th:href="@{/reservas}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
