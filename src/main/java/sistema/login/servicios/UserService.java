@@ -33,13 +33,21 @@ public class UserService {
         return userRepository.findByCedula(cedula)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
-    
-    // ELIMINÉ el método duplicado findByCedula(String cedulaStr)
-    // Ya existe el método de arriba que recibe String
-    
-    // Agregué este método para buscar por email si lo necesitas
+
     public Usuario findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    public void crearAdmin() {
+    Usuario admin = new Usuario(
+        "9876543210",
+        "admin@empresa.com",
+        passwordEncoder.encode("admin123"),
+        "Super Admin",
+        Usuario.Role.ADMIN
+    );
+    userRepository.save(admin);
+}
+
 }

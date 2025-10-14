@@ -18,45 +18,20 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-    @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/", 
-                "/login", 
-                "/register", 
-                "/test-public",  // ← NUEVA RUTA DE PRUEBA
-                "/css/**", 
-                "/js/**", 
-                "/images/**"
-            ).permitAll()
-            .anyRequest().authenticated()
-        )
-        .formLogin(form -> form
-            .loginPage("/login")
-            .loginProcessingUrl("/login")
-            .usernameParameter("cedula")
-            .passwordParameter("password")
-            .defaultSuccessUrl("/reservas", true)
-            .permitAll()
-        )
-        .logout(logout -> logout
-            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-            .logoutSuccessUrl("/login?logout")
-            .permitAll()
-        )
-        .csrf(csrf -> csrf.disable());
-
-    return http.build();
-}
-//   @Bean
+//     @Bean
 // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //     http
 //         .authorizeHttpRequests(auth -> auth
-//             // PERMITIR TODO temporalmente para testing
-//             .anyRequest().permitAll()
+//             .requestMatchers(
+//                 "/", 
+//                 "/login", 
+//                 "/register", 
+//                 "/test-public",  // ← NUEVA RUTA DE PRUEBA
+//                 "/css/**", 
+//                 "/js/**", 
+//                 "/images/**"
+//             ).permitAll()
+//             .anyRequest().authenticated()
 //         )
 //         .formLogin(form -> form
 //             .loginPage("/login")
@@ -64,15 +39,39 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //             .usernameParameter("cedula")
 //             .passwordParameter("password")
 //             .defaultSuccessUrl("/reservas", true)
+//             .permitAll()
 //         )
 //         .logout(logout -> logout
 //             .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 //             .logoutSuccessUrl("/login?logout")
+//             .permitAll()
 //         )
 //         .csrf(csrf -> csrf.disable());
 
 //     return http.build();
 // }
+      @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                // PERMITIR TODO temporalmente para testing
+                .anyRequest().permitAll()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("cedula")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/reservas", true)
+            )
+            .logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+            )
+            .csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
 }
 
 
