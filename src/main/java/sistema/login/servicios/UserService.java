@@ -41,10 +41,10 @@ public class UserService {
 
     public void crearAdmin() {
     Usuario admin = new Usuario(
-        "9876543210",
-        "admin@empresa.com",
-        passwordEncoder.encode("admin123"),
-        "Super Admin",
+        "123456789",
+        "admin2@empresa.com",
+        passwordEncoder.encode("Admin123*"),
+        "Administrador",
         Usuario.Role.ADMIN
     );
     userRepository.save(admin);
