@@ -4,42 +4,181 @@
     <meta charset="UTF-8">
     <title>Registro - Spa Reservas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #6f42c1, #0d6efd);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        
+        .card-header {
+            background: transparent;
+            border-bottom: none;
+        }
+
+        .card-header h3 {
+            font-weight: 700;
+            color: #0d6efd;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            padding: 10px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            background: linear-gradient(90deg, #0d6efd, #6f42c1);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #6f42c1, #0d6efd);
+            transform: scale(1.03);
+        }
+
+        .text-center a {
+            text-decoration: none;
+            color: #0d6efd;
+            transition: color 0.2s ease;
+        }
+
+        .text-center a:hover {
+            color: #6f42c1;
+        }
+
+        /* Mensajes de error */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+
+        .valid-field {
+            border-color: #198754 !important;
+        }
+
+        .invalid-field {
+            border-color: #dc3545 !important;
+        }
+
+        /* Barra de fortaleza de contraseña */
+        .password-strength {
+            height: 6px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .strength-weak {
+            background-color: #dc3545;
+            width: 25%;
+        }
+
+        .strength-medium {
+            background-color: #ffc107;
+            width: 50%;
+        }
+
+        .strength-strong {
+            background-color: #198754;
+            width: 75%;
+        }
+
+        .strength-very-strong {
+            background-color: #0d6efd;
+            width: 100%;
+        }
+
+        /* Animación de aparición */
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Alertas personalizadas */
+        .alert {
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container fade-in">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
+            <div class="col-md-6 col-lg-5">
+                <div class="card p-4">
                     <div class="card-header">
-                        <h3 class="text-center">Registrarse</h3>
+                        <h3>Crear cuenta</h3>
                     </div>
                     <div class="card-body">
                         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-                        
-                        <!-- ELIMINAR la línea del CSRF token -->
-                        <form th:action="@{/register}" method="post" th:object="${registerDTO}">
+
+                        <form th:action="@{/register}" method="post" th:object="${registerDTO}" id="registerForm">
                             <div class="mb-3">
                                 <label for="cedula" class="form-label">Cédula</label>
-                                <input type="text" class="form-control" id="cedula" th:field="*{cedula}" required>
+                                <input type="text" class="form-control" id="cedula" th:field="*{cedula}" required placeholder="Ej: 123456789">
+                                <div id="cedulaError" class="error-message"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre completo</label>
-                                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required placeholder="Ej: María González">
+                                <div id="nombreError" class="error-message"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required placeholder="Ej: usuario@dominio.com">
+                                <div id="emailError" class="error-message"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
-                                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                <input type="password" class="form-control" id="password" th:field="*{password}" required placeholder="Mínimo 8 caracteres con mayúscula, minúscula, número y carácter especial">
+                                <div id="passwordStrength" class="password-strength"></div>
+                                <div id="passwordError" class="error-message"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
-                                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" required>
+                                <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" required placeholder="Repite tu contraseña">
+                                <div id="confirmPasswordError" class="error-message"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-2">Registrarse</button>
                         </form>
                         <div class="text-center mt-3">
                             <a th:href="@{/login}">¿Ya tienes cuenta? Inicia sesión</a>
@@ -49,5 +188,277 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const nombreInput = document.getElementById('nombre');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const cedulaInput = document.getElementById('cedula');
+            
+            // Validación del nombre
+            nombreInput.addEventListener('blur', validateNombre);
+            nombreInput.addEventListener('input', function() {
+                clearError(nombreInput, document.getElementById('nombreError'));
+            });
+            
+            function validateNombre() {
+                const nombre = nombreInput.value.trim();
+                const errorElement = document.getElementById('nombreError');
+                
+                // Verificar que tenga al menos dos palabras
+                const words = nombre.split(' ').filter(word => word.length > 0);
+                if (words.length < 2) {
+                    showError(nombreInput, errorElement, 'El nombre debe contener al menos dos palabras');
+                    return false;
+                }
+                
+                // Verificar que no contenga números ni caracteres especiales
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+                if (!regex.test(nombre)) {
+                    showError(nombreInput, errorElement, 'El nombre no puede contener números ni caracteres especiales');
+                    return false;
+                }
+                
+                // Verificar que no sea un patrón repetitivo como "Jjjjw Jaa"
+                const hasRepetitivePattern = words.some(word => {
+                    if (word.length < 3) return false;
+                    
+                    // Verificar si tiene vocales (debe tener al menos una vocal)
+                    const hasVowels = /[aeiouáéíóúAEIOUÁÉÍÓÚ]/.test(word);
+                    if (!hasVowels) {
+                        return true;
+                    }
+                    
+                    // Verificar patrones repetitivos de consonantes
+                    const consonants = word.replace(/[aeiouáéíóúAEIOUÁÉÍÓÚ]/g, '');
+                    if (consonants.length >= 3) {
+                        // Verificar si hay muchas consonantes consecutivas
+                        const consecutiveConsonants = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{3,}/.test(word);
+                        if (consecutiveConsonants) {
+                            return true;
+                        }
+                    }
+                    
+                    return false;
+                });
+                
+                if (hasRepetitivePattern) {
+                    showError(nombreInput, errorElement, 'El nombre debe tener sentido y contener vocales adecuadamente');
+                    return false;
+                }
+                
+                clearError(nombreInput, errorElement);
+                return true;
+            }
+            
+            // Validación del email
+            emailInput.addEventListener('blur', validateEmail);
+            emailInput.addEventListener('input', function() {
+                clearError(emailInput, document.getElementById('emailError'));
+            });
+            
+            function validateEmail() {
+                const email = emailInput.value.trim();
+                const errorElement = document.getElementById('emailError');
+                
+                // Verificar que tenga al menos 3 caracteres antes del @
+                const atIndex = email.indexOf('@');
+                if (atIndex < 3) {
+                    showError(emailInput, errorElement, 'El email debe tener al menos 3 caracteres antes del @');
+                    return false;
+                }
+                
+                // Verificar que después del punto solo tenga máximo 3 letras
+                const domain = email.substring(atIndex + 1);
+                const lastDotIndex = domain.lastIndexOf('.');
+                
+                if (lastDotIndex !== -1) {
+                    const extension = domain.substring(lastDotIndex + 1);
+                    if (extension.length > 3 || !/^[a-zA-Z]{2,3}$/.test(extension)) {
+                        showError(emailInput, errorElement, 'La extensión del dominio debe tener entre 2 y 3 letras (ej: .com, .org)');
+                        return false;
+                    }
+                    
+                    // Verificar que el dominio tenga al menos 2 caracteres antes del punto
+                    const domainName = domain.substring(0, lastDotIndex);
+                    if (domainName.length < 2) {
+                        showError(emailInput, errorElement, 'El dominio del email debe tener al menos 2 caracteres');
+                        return false;
+                    }
+                    
+                    // Verificar que no sea un patrón repetitivo como "sss@gmail.c"
+                    const username = email.substring(0, atIndex);
+                    const hasRepetitiveChars = /(.)\1{2,}/.test(username); // Detecta 3 o más caracteres repetidos
+                    if (hasRepetitiveChars) {
+                        showError(emailInput, errorElement, 'El nombre de usuario no puede tener caracteres repetidos consecutivos');
+                        return false;
+                    }
+                } else {
+                    showError(emailInput, errorElement, 'El email debe tener un dominio válido');
+                    return false;
+                }
+                
+                clearError(emailInput, errorElement);
+                return true;
+            }
+            
+            // Validación de la contraseña
+            passwordInput.addEventListener('input', validatePassword);
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                const errorElement = document.getElementById('passwordError');
+                const strengthIndicator = document.getElementById('passwordStrength');
+                
+                // Verificar longitud mínima
+                if (password.length < 8) {
+                    showError(passwordInput, errorElement, 'La contraseña debe tener al menos 8 caracteres');
+                    updatePasswordStrength(0);
+                    return false;
+                }
+                
+                // Verificar que tenga al menos una mayúscula
+                if (!/[A-Z]/.test(password)) {
+                    showError(passwordInput, errorElement, 'La contraseña debe contener al menos una letra mayúscula');
+                    updatePasswordStrength(1);
+                    return false;
+                }
+                
+                // Verificar que tenga al menos una minúscula
+                if (!/[a-z]/.test(password)) {
+                    showError(passwordInput, errorElement, 'La contraseña debe contener al menos una letra minúscula');
+                    updatePasswordStrength(2);
+                    return false;
+                }
+                
+                // Verificar que tenga al menos un número
+                if (!/\d/.test(password)) {
+                    showError(passwordInput, errorElement, 'La contraseña debe contener al menos un número');
+                    updatePasswordStrength(3);
+                    return false;
+                }
+                
+                // Verificar que tenga al menos un carácter especial
+                if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                    showError(passwordInput, errorElement, 'La contraseña debe contener al menos un carácter especial');
+                    updatePasswordStrength(4);
+                    return false;
+                }
+                
+                // Calcular fortaleza de la contraseña
+                let strength = 0;
+                if (password.length >= 12) strength++;
+                if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength++;
+                
+                updatePasswordStrength(strength);
+                clearError(passwordInput, errorElement);
+                return true;
+            }
+            
+            function updatePasswordStrength(strength) {
+                const strengthIndicator = document.getElementById('passwordStrength');
+                strengthIndicator.className = 'password-strength';
+                
+                if (strength <= 1) {
+                    strengthIndicator.classList.add('strength-weak');
+                } else if (strength <= 2) {
+                    strengthIndicator.classList.add('strength-medium');
+                } else if (strength <= 3) {
+                    strengthIndicator.classList.add('strength-strong');
+                } else {
+                    strengthIndicator.classList.add('strength-very-strong');
+                }
+            }
+            
+            // Validación de confirmación de contraseña
+            confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+            
+            function validateConfirmPassword() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const errorElement = document.getElementById('confirmPasswordError');
+                
+                if (password !== confirmPassword) {
+                    showError(confirmPasswordInput, errorElement, 'Las contraseñas no coinciden');
+                    return false;
+                }
+                
+                clearError(confirmPasswordInput, errorElement);
+                return true;
+            }
+            
+            // Validación de cédula (solo números, mínimo 9 dígitos, no puede empezar con 0)
+            cedulaInput.addEventListener('blur', validateCedula);
+            cedulaInput.addEventListener('input', function() {
+                clearError(cedulaInput, document.getElementById('cedulaError'));
+            });
+            
+            function validateCedula() {
+                const cedula = cedulaInput.value.trim();
+                const errorElement = document.getElementById('cedulaError');
+                
+                // Verificar que solo contenga números
+                if (!/^\d+$/.test(cedula)) {
+                    showError(cedulaInput, errorElement, 'La cédula solo puede contener números');
+                    return false;
+                }
+                
+                // Verificar que tenga mínimo 9 dígitos
+                if (cedula.length < 9) {
+                    showError(cedulaInput, errorElement, 'La cédula debe tener mínimo 9 dígitos');
+                    return false;
+                }
+                
+                // Verificar que no empiece con 0
+                if (cedula.startsWith('0')) {
+                    showError(cedulaInput, errorElement, 'La cédula no puede empezar con 0');
+                    return false;
+                }
+                
+                clearError(cedulaInput, errorElement);
+                return true;
+            }
+            
+            // Función para mostrar errores
+            function showError(input, errorElement, message) {
+                input.classList.remove('valid-field');
+                input.classList.add('invalid-field');
+                errorElement.textContent = message;
+            }
+            
+            // Función para limpiar errores
+            function clearError(input, errorElement) {
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+                input.classList.remove('invalid-field');
+                input.classList.add('valid-field');
+            }
+            
+            // Manejo del envío del formulario
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isNombreValid = validateNombre();
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                const isConfirmPasswordValid = validateConfirmPassword();
+                const isCedulaValid = validateCedula();
+                
+                if (isNombreValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isCedulaValid) {
+                    // Si todas las validaciones pasan, enviar el formulario
+                    form.submit();
+                } else {
+                    // Mostrar mensaje de error general
+                    alert('Por favor, corrige los errores en el formulario antes de enviar.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
